@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_head(title,links)">
+  <meta charset="UTF-8">
+
+  <title th:replace="${title}">イベント管理システム</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <!--/* Per-page placeholder for additional links */-->
+  <th:block th:replace="${links}" />
+</head>
+<body>
+</body>
+</html>

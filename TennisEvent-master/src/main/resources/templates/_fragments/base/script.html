@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="base_script (scripts)" th:remove="tag">
+    <th:block th:if="${scripts != null}">
+      <th:block th:replace="${scripts}" />
+    </th:block>
+  </div>
+</body>
+</html>

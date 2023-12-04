@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="header">
+    <div class="container">
+      <a class="navbar-brand" th:href="@{/events}">テニスイベント掲示板</a>
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown"><a
+              class="nav-link dropdown-toggle" href="#"
+              id="user-dropdown-toggle" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false"> <span th:text="${session.userName}"></span>
+          </a>
+            <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
+              <li><a class="dropdown-item" th:href="@{/user/updateUser}">プロフィールの編集</a></li>
+              <li><a class="dropdown-item"
+                     th:href="@{/user/listUserEvent}">予定（主催・参加イベント一覧）</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" th:href="@{/logout}">ログアウト</a></li>
+              <!-- 他のリンクをここに追加 -->
+            </ul></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</body>
+</html>

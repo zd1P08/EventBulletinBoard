@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.EventMapper">
+	<select id="selectAll" resultType="Event">
+		SELECT
+			events.event_id,
+			events.user_id, events.event_start_date, events.event_end_date,
+			events.location_id, events.amount, events.capacity,
+			events.level_id, events.content,
+			levels.level_name, users.user_name, locations.location_name
+		FROM events
+		JOIN levels ON events.level_id = levels.level_id
+		JOIN users ON events.user_id = users.user_id
+		JOIN locations ON events.location_id = locations.location_id
+	</select>
+	
+	<select id="selectByEventId" parameterType="int" resultType="Event">
+ 		SELECT
+			events.event_id, events.user_id, events.event_start_date, 
+			events.event_end_date, events.location_id, events.amount,
+			events.capacity,
+			events.level_id, events.content
+		 FROM events
+		 WHERE events.event_id = #{eventId}
+ 	</select>
+ 	
+	<insert id="insert" parameterType="Event">
+		INSERT INTO events (event_id, user_id, event_start_date, event_end_date,
+			location_id, amount, capacity, level_id, content)
+		VALUES (#{eventId}, #{userId}, #{eventStartDate}, #{eventEndDate},
+			#{locationId}, #{amount}, #{capacity},
+			#{levelId}, #{content})
+	</insert>
+	
+	<update id="update" parameterType="Event">
+		UPDATE events
+ 		SET event_id = #{eventId}, user_id = #{userId}, event_start_date = #{eventStartDate},
+ 			event_end_date = #{eventEndDate}, location_id = #{locationId}, amount = #{amount},
+ 			capacity = #{capacity},
+ 			level_id = #{levelId}, content = #{content}
+		WHERE event_id = #{eventId}
+ 	</update>
+ 	
+ 	<delete id="delete" parameterType="int">
+ 		DELETE FROM events WHERE event_id = #{eventId}
+ 	</delete>
+ 	
+ 	<select id="count" resultType="long">
+ 		SELECT COUNT(*) FROM events
+ 	</select>
+
+	<resultMap type="com.example.app.domain.Event" id="event">
+		<id column="event_id" property="eventId"/>
+		<result column="user_id" property="userId"/>
+		<result column="event_start_date" property="eventStartDate"/>
+		<result column="event_end_date" property="eventEndDate"/>
+		<result column="address" property="address"/>
+		<result column="location_id" property="locationId"/>
+		<result column="amount" property="amount"/>
+		<result column="capacity" property="capacity"/>
+		<result column="level_id" property="levelId"/>
+		<result column="content" property="content"/>
+		<result column="level_name" property="levelName"/>
+		<result column="user_name" property="userName"/>
+		<result column="location_name" property="locationName"/>
+		<result column="joined_user_num" property="joinedUserNum"/>
+	</resultMap>
+ 	<select id="selectLimited" resultMap="event">
+		SELECT
+			events.event_id,
+			events.user_id, events.event_start_date, events.event_end_date,
+			events.location_id, events.amount, events.capacity,
+			events.level_id, events.content,
+			levels.level_name, users.user_name, locations.location_name,
+			COALESCE(joined_event.joined_user_num, 0) AS joined_user_num
+		FROM events
+		JOIN levels ON events.level_id = levels.level_id
+		JOIN users ON events.user_id = users.user_id
+		JOIN locations ON events.location_id = locations.location_id
+		LEFT JOIN
+		(SELECT event_id, COUNT(*) AS joined_user_num FROM event_participants GROUP BY event_id) AS joined_event
+		ON joined_event.event_id = events.event_id
+		WHERE events.user_id != #{userId}
+		ORDER BY events.event_id
+		LIMIT #{offset}, #{numPerPage}
+ 	</select>
+ 	
+ 	<select id="selectEventsByUserId" resultMap="event">
+		SELECT
+			events.event_id, events.user_id,
+			events.event_start_date, events.event_end_date,
+			events.location_id, events.amount, events.capacity,
+			events.level_id, events.content,
+			levels.level_name, users.user_name, locations.location_name,
+		COALESCE(joined_event.joined_user_num, 0) AS joined_user_num
+		FROM events
+		JOIN levels ON events.level_id = levels.level_id
+		JOIN users ON events.user_id = users.user_id
+		JOIN locations ON events.location_id = locations.location_id
+		LEFT JOIN
+		(SELECT event_id, COUNT(*) AS joined_user_num FROM event_participants GROUP BY event_id) AS joined_event
+		ON joined_event.event_id = events.event_id
+		WHERE events.user_id = #{userId}
+		ORDER BY events.event_id
+		LIMIT #{offset}, #{numPerPage}
+	</select>
+ 	
+ 	<select id="countEventsByUserId" resultType="int">
+    	SELECT COUNT(*)
+		FROM events
+		JOIN levels ON events.level_id = levels.level_id
+		JOIN users ON events.user_id = users.user_id
+		JOIN locations ON events.location_id = locations.location_id
+    	WHERE events.user_id = #{userId}
+	</select>
+
+	<select id="countEventJoinedUser" resultType="int">
+		SELECT COUNT(*)
+		FROM event_participants
+		WHERE event_participants.event_id = #{eventId}
+	</select>
+
+	<insert id="joinEvent" parameterType="int">
+    	INSERT INTO event_participants (user_id, event_id, status) VALUES (#{userId}, #{eventId}, 'Joined')
+	</insert>
+	<!-- ユーザーが既にイベントに参加しているかどうかを確認するクエリ -->
+	<select id="isUserAlreadyJoined" parameterType="int" resultType="int">
+    	SELECT COUNT(*)
+    	FROM event_participants
+    	WHERE user_id = #{userId} AND event_id = #{eventId}
+	</select>
+
+	<select id="listJoinedEvents" resultMap="event">
+		SELECT
+			events.event_id, events.user_id,
+			events.event_start_date, events.event_end_date,
+			events.location_id, events.amount, events.capacity,
+			events.level_id, events.content,
+			levels.level_name, users.user_name, locations.location_name,
+		COALESCE(joined_event.joined_user_num, 0) AS joined_user_num
+		FROM events
+		JOIN levels ON events.level_id = levels.level_id
+		JOIN locations ON events.location_id = locations.location_id
+		JOIN users ON events.user_id = users.user_id
+		JOIN event_participants ON events.event_id = event_participants.event_id
+		LEFT JOIN
+		(SELECT event_id, COUNT(*) AS joined_user_num FROM event_participants GROUP BY event_id) AS joined_event
+		ON joined_event.event_id = events.event_id
+		WHERE event_participants.user_id = #{userId}
+	</select>
+
+	<select id="cancel">
+		DELETE FROM event_participants WHERE event_id = #{eventId} AND user_id = #{userId}
+	</select>
+
+</mapper>

@@ -1,0 +1,93 @@
+<html th:replace="~{_fragments/layout/basic :: layout(~{::title}, ~{}, ~{::section})}">
+<head>
+	<title>イベント管理システム - ユーザ登録</title>
+</head>
+<body>
+	<section class="mt-4">
+		<div class="container">
+			<div class="row col-md-8 mx-auto">
+				<div class="card">
+					<div class="card-header">
+						<h2 class="text-center">[[${title}]]</h2>
+					</div>
+					<div th:if="${param.success}">
+						<div class="alert alert-info">
+							You have successfully registered our app!
+						</div>
+					</div>
+					<div class="card-body">
+						<form
+								method="post"
+								role="form"
+								th:action="@{/auth/register}"
+								th:object="${user}"
+						>
+							<div class="form-group mb-3">
+								<label class="form-label">名前</label>
+								<input
+										class="form-control"
+										id="userName"
+										name="userName"
+										placeholder="Enter user name"
+										th:field="*{userName}"
+										type="text"
+								/>
+								<p th:errors = "*{userName}" class="text-danger"
+									 th:if="${#fields.hasErrors('userName')}"></p>
+							</div>
+
+							<div class="form-group mb-3">
+								<label class="form-label">レベル</label>
+								<select id="levelId" name="levelId" th:field="*{levelId}">
+									<option value="" selected>選択してください</option>
+									<option th:each="level : ${levels}" th:value="${level.levelId}"
+													th:text="${level.levelName}"></option>
+								</select>
+								<p th:errors = "*{levelId}" class="text-danger"
+									 th:if="${#fields.hasErrors('levelId')}"></p>
+							</div>
+
+							<div class="form-group mb-3">
+								<label class="form-label">ログインID</label>
+								<input
+										class="form-control"
+										id="loginId"
+										name="loginId"
+										placeholder="Enter login id"
+										th:field="*{loginId}"
+										type="loginId"
+								/>
+								<p th:errors = "*{loginId}" class="text-danger"
+									 th:if="${#fields.hasErrors('loginId')}"></p>
+							</div>
+
+							<div class="form-group mb-3">
+								<label class="form-label">パスワード</label>
+								<input
+										class="form-control"
+										id="loginPass"
+										name="loginPass"
+										placeholder="Enter loginPass"
+										th:field="*{loginPass}"
+										type="loginPass"
+								/>
+								<p th:errors = "*{loginPass}" class="text-danger"
+									 th:if="${#fields.hasErrors('loginPass')}"></p>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-primary" type="submit">登録</button>
+								<span>登録済みの方：<a th:href="@{/login}">ログインはこちら</a></span>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row col-md-8 mx-auto">
+				<div class="mt-4">
+					<a th:href="@{/}">戻る</a>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

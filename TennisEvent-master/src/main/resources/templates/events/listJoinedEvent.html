@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html th:replace="~{_fragments/layout/basic :: layout(~{::title}, ~{}, ~{::script}, ~{::section})}">
+<head>
+	<title>イベント一覧</title>
+</head>
+<body>
+	<section>
+		<div class="container">
+			<h1 class="mt-4">予定(主催・参加イベント一覧)</h1>
+			<!-- 操作に応じたメッセージを表示:start -->
+			<div th:if="${statusMessage}" class="alert alert-success mt-4">[[${statusMessage}]]</div>
+			<!-- 操作に応じたメッセージを表示:end -->
+			<p>
+				<a class="mt-4 btn btn-primary" th:href="@{/events/add}">イベントの追加</a>
+				<a class="mt-4 ml-4 btn btn-secondary" th:href="@{/logout}">ログアウト
+				</a>
+				<a class="mt-4 ml-4 btn btn-info" th:href="@{/myPage}">主催イベント一覧
+				</a>
+			</p>
+			<table class="table">
+				<tr>
+					<th>主催者</th>
+					<th>開始時間</th>
+					<th>終了時間</th>
+					<th>コート名</th>
+					<th>金額</th>
+					<th>定員</th>
+					<th>参加人数</th>
+					<th>レベル</th>
+					<th>イベント内容</th>
+					<th colspan="2"></th>
+				</tr>
+				<tr th:each="event : ${join}">
+					<td>[[${event.userName}]]</td>
+					<td>[[${#dates.format(event.eventStartDate, 'yyyy年MM月dd日(E)')}]]</td>
+					<td>[[${#dates.format(event.eventEndDate, 'yyyy年MM月dd日(E)')}]]</td>
+					<td>[[${event.locationName}]]</td>
+					<td>[[${#numbers.formatInteger(event.amount, 1, 'COMMA')}]]</td>
+					<td>[[${event.capacity}]]</td>
+					<td>[[${event.joinedUserNum}]]</td>
+					<td>[[${event.levelName}]]</td>
+					<td>[[${event.content}]]</td>
+					<td><a class="btn btn-warning cancel"
+							 th:href="@{/events/cancel/{id}(id=${event.eventId})}"
+							 data-toggle="modal" data-target="#confirm-modal">キャンセル</a></td>
+				</tr>
+			</table>
+		</div>
+		<!-- 2 ページ以上の場合、ページネーションを表示:start -->
+		<div th:if="${totalPages} >= 2" class="container">
+			<ul class="pagination">
+				<!-- 前のページへ -->
+				<th:block th:switch="${page}">
+					<li th:case="1" class="page-item disabled"><a class="page-link"
+						href="">&laquo;</a></li>
+					<li th:case="*" class="page-item"><a class="page-link"
+						th:href="@{/events/listEvent(page=${page - 1})}">&laquo;</a></li>
+				</th:block>
+				<!-- ページ番号 -->
+				<th:block th:each="index : ${#numbers.sequence(1, totalPages)}">
+					<th:block th:switch="${index}">
+						<li th:case="${page}" class="page-item active"><a
+							class="page-link" href="">[[${index}]]</a></li>
+						<li th:case="*" class="page-item"><a class="page-link"
+							th:href="@{/events/listEvent(page=${index})}">[[${index}]]</a></li>
+					</th:block>
+				</th:block>
+				<!-- 次のページへ -->
+				<th:block th:switch="${page}">
+					<li th:case="${totalPages}" class="page-item disabled"><a
+						class="page-link" href="">&raquo;</a></li>
+					<li th:case="*" class="page-item"><a class="page-link"
+						th:href="@{/events/listEvent(page=${page + 1})}">&raquo;</a></li>
+				</th:block>
+			</ul>
+		</div>
+		<!-- 2 ページ以上の場合、ページネーションを表示:end -->
+		<!-- Bootstrap4 Modal -->
+		<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog"
+			 aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Cancel</h5>
+						<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						イベントへの参加をキャンセルします。よろしいですか？
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-warning" id="cancel-yes">はい</a>
+						<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">いいえ</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+		$(".cancel").click(function() {
+			$("#cancel-name").text($(this).attr("data-name"));
+			$("#cancel-yes").attr("href", $(this).attr("href"));
+		});
+	</script>
+</body>
+</html>

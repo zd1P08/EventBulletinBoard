@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html th:replace="~{_fragments/layout/basic :: layout(~{::title}, ~{}, ~{}, ~{::section})}">
+<head>
+	<title>イベント管理システム - イベント登録</title>
+</head>
+<body>
+	<section>
+		<div class="container">
+			<h1 class="my-4">[[${title}]]</h1>
+			<form
+					th:action="@{/events/add}"
+					method="post"
+					th:object="${event}">
+				<table class="table table-bordered">
+					<tr>
+						<th>開始時間</th>
+						<td>
+							<input type="datetime-local" th:field="*{eventStartDate}">
+							<span th:errors="*{eventStartDate}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>終了時間</th>
+						<td>
+							<input type="datetime-local" th:field="*{eventEndDate}">
+							<span th:errors="*{eventEndDate}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>場所</th>
+						<td>
+							<select th:field="*{locationId}">
+								<option value="" selected>選択してください</option>
+								<option th:each="location : ${locations}"
+									th:value="${location.locationId}"
+									th:text="${location.locationName}"></option>
+							</select>
+							<span th:errors="*{locationId}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>金額</th>
+						<td>
+							<input type="text" th:field="*{amount}">
+							<span th:errors="*{amount}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>募集人数</th>
+						<td>
+							<input type="text" th:field="*{capacity}">
+							<span th:errors="*{capacity}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>参加者のレベル</th>
+						<td>
+							<select th:field="*{levelId}">
+								<option value="" selected>選択してください</option>
+								<option th:each="level : ${levels}" th:value="${level.levelId}"
+									th:text="${level.levelName}"></option>
+							</select>
+							<span th:errors="*{levelId}" class="error"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>イベント内容</th>
+						<td>
+							<textarea rows="6" cols="50" th:field="*{content}"></textarea>
+							<span th:errors="*{content}" class="error"></span>
+						</td>
+					</tr>
+				</table>
+				<input class="btn btn-primary" type="submit" value="作成">
+			</form>
+			<p class="mt-4">
+				<a th:href="@{/events}">一覧に戻る</a>
+			</p>
+		</div>
+	</section>
+</body>
+</html>

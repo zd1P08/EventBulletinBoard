@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>イベント管理システム</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="text-center mt-4">
+		<h1>イベント管理システム</h1>
+		<div sec:authentication="principal"></div>
+		<a class="mt-4 btn btn-primary" th:href="@{/auth/logout}">Logout</a>
+	</div>
+</body>
+</html>

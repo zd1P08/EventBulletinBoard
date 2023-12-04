@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja" th:fragment="layout (_title, _link, _scripts, _content)" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments/base/head :: common_head(~{::title},~{::link})">
+  <title th:replace="${_title}">イベント管理システム</title>
+  <link th:replace="${_link}" />
+</head>
+<body>
+  <div th:replace="_fragments/base/header :: header"></div>
+
+  <div th:replace="${_content} ?: ~{}"></div>
+
+  <div th:replace="_fragments/base/script :: base_script(~{::script})">
+    <script th:src="@{/js/jquery-3.5.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+    <script th:replace="${_scripts} ?: ~{}"></script>
+  </div>
+</body>
+</html>
